@@ -1,0 +1,15 @@
+Todo list:
+	
+	Create level editor?
+		Design system for world data.
+			could just do single characters, but might be limited. could do every tile separated by a symbol like ~ or something, and then put data between. Can be raw like 1~1~0p~0b~1 where 1 is a solid tile, 0 is an empty tile (ie a background tile) and the followign letter means button or player. Maybe like that
+	
+	Get player movement working
+	
+	Main menu
+	
+	UI?
+	
+	Create dialogue box system (probably part of UI)
+	
+	
