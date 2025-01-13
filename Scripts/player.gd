@@ -1,16 +1,18 @@
 extends CharacterBody2D
 
 const tile_size = 100;
-const SPEED = 300.0
-const JUMP_VELOCITY = -500.0
+const SPEED = 500.0
+const JUMP_VELOCITY = -700.0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
+var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")*1.8;
 
 @onready var player_shape = %PlayerShape; #currently unused
 @onready var player_sprite = %PlayerSprite1; 
 @onready var left_wall_detector = %LeftWallDetector;
 @onready var right_wall_detector = %RightWallDetector;
+@onready var floor_detector = %RFloorDetector;
+@onready var ceiling_detector = %CeilingDetector;
 
 var cur_shape = 0;
 const max_shape_id = 2;
@@ -63,8 +65,7 @@ func _process(delta):
 	
 	if shape_id_as_str[cur_shape] == 'triangle' and (Input.is_action_just_pressed("up") or (Input.is_action_just_pressed("down") and is_on_ceiling())):
 		if (is_on_floor() and !is_gravity_inverted) or (is_on_ceiling() and is_gravity_inverted):
-			is_gravity_inverted = !is_gravity_inverted;
-			player_sprite.flip_v = is_gravity_inverted;
+			invert_gravity();
 	
 	if shape_id_as_str[cur_shape] == 'circle' and Input.is_action_pressed("up"):
 		if Input.is_action_pressed("right"):
@@ -83,9 +84,30 @@ func set_shape(shape_id): #currently the shape frame. from 0, they are square, t
 		player_sprite.frame = shape_id;
 
 func morph_next_shape():
-	if !is_on_floor() or is_gravity_inverted:
-		return;
+	#if !is_on_floor() or is_gravity_inverted:
+		#return;
+	if shape_id_as_str[cur_shape] == "triangle":
+		if is_gravity_inverted:
+			invert_gravity();
+	
 	cur_shape += 1;
 	if cur_shape > max_shape_id:
 		cur_shape = 0;
 	set_shape(cur_shape);
+
+func get_standing_surfaces():
+	if !is_gravity_inverted:
+		return floor_detector.get_overlapping_bodies();
+	else:
+		return ceiling_detector.get_overlapping_bodies();
+
+func is_on_clean_surface():
+	for body in get_standing_surfaces():
+		if 'tile_id' in body.get_parent():
+			if body.get_parent().tile_id == 2:
+				return body.get_parent();
+	return true;
+
+func invert_gravity():
+	is_gravity_inverted = !is_gravity_inverted;
+	player_sprite.flip_v = is_gravity_inverted;
