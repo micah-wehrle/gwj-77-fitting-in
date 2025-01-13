@@ -1,10 +1,11 @@
 extends Node2D
 
-var tile_size = 100;
+const tile_size = 100;
 
 var tile_grid = [];
 
 @onready var tile_parent = %TileParent;
+@onready var level_camera = %LevelCamera;
 
 var tile_scene = preload("res://Scenes/tile.tscn")
 var player_scene = preload("res://Scenes/player.tscn");
@@ -16,6 +17,8 @@ var level_data = '1111111111n1000000001n1000000001n1000000001n1000p00001n1111111
 func _ready():
 	player = player_scene.instantiate();
 	self.add_child(player);
+	self.remove_child(level_camera);
+	player.add_child(level_camera);
 	
 	self.build_level();
 	pass # Replace with function body.

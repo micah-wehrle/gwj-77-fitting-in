@@ -17,6 +17,8 @@ func _process(delta):
 func set_is_bg(is_bg):
 	self.is_background = is_bg;
 	tile_sprite.set_self_modulate(Color(1,1,1, 0.5 if self.is_background else 1.0));
-	tile_body.set_process( !self.is_background );
+	#tile_body.set_process( !self.is_background );
+	if (is_bg):
+		tile_body.queue_free();
 	
 	 
