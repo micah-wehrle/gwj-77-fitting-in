@@ -1,15 +1,17 @@
 Todo list:
 	
-	Create level editor?
-		Design system for world data.
+	[ ] Create level editor? Thinking I'll just do this simply in html but we'll see..
+		[ ] Design system for world data.
 			could just do single characters, but might be limited. could do every tile separated by a symbol like ~ or something, and then put data between. Can be raw like 1~1~0p~0b~1 where 1 is a solid tile, 0 is an empty tile (ie a background tile) and the followign letter means button or player. Maybe like that
 	
-	Get player movement working
+	[X] Get player movement working
 	
-	Main menu
+	[ ] Main menu
 	
-	UI?
+	[ ] UI?
 	
-	Create dialogue box system (probably part of UI)
+	[ ] Create dialogue box system (probably part of UI)
 	
-	
+	[ ] Come up with shapes, abilities, and such. Currently started in the design doc
+
+	[ ] Art. Think I'm going to try to go for a pixel art Portal style. Think I'll start with white and black tiles. They'll be sort of like the current square shape, a white ish color with a darker border. Will probably make a big sheet of them, with different shading and configuration and little defects. Like can add one that's 4 smaller squares, or two 1x2 squares, or a 1x2 and two small squares. That sort of thing. then go from there.
