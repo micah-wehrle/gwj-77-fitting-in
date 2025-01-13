@@ -2,13 +2,15 @@ extends CharacterBody2D
 
 const tile_size = 100;
 const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
+const JUMP_VELOCITY = -500.0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 @onready var player_shape = %PlayerShape; #currently unused
 @onready var player_sprite = %PlayerSprite1; 
+@onready var left_wall_detector = %LeftWallDetector;
+@onready var right_wall_detector = %RightWallDetector;
 
 var cur_shape = 0;
 const max_shape_id = 2;
@@ -16,6 +18,8 @@ const max_shape_id = 2;
 const shape_id_as_str = ['square', 'triangle', 'circle'];
 
 var is_gravity_inverted = false;
+
+var last_y_vel = 0;
 
 func _ready(): 
 	# setup shapes
@@ -40,6 +44,16 @@ func _physics_process(delta):
 		velocity.x = direction * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
+	
+	if shape_id_as_str[cur_shape] == 'circle':
+		if !is_on_floor():
+			last_y_vel = velocity.y;
+		elif last_y_vel != 0:
+			if abs(last_y_vel) > abs(JUMP_VELOCITY*1.5):
+				velocity.y = -last_y_vel;
+				if Input.is_action_pressed("down"):
+					velocity.y *= 0.5;
+			last_y_vel = 0;
 
 	move_and_slide()
 
@@ -47,17 +61,29 @@ func _process(delta):
 	if Input.is_action_just_pressed("tab"):
 		morph_next_shape();
 	
-	if Input.is_action_just_pressed("up"):
-		if shape_id_as_str[cur_shape] == 'triangle':
-			if (is_on_floor() and !is_gravity_inverted) or (is_on_ceiling() and is_gravity_inverted):
-				is_gravity_inverted = !is_gravity_inverted;
+	if shape_id_as_str[cur_shape] == 'triangle' and (Input.is_action_just_pressed("up") or (Input.is_action_just_pressed("down") and is_on_ceiling())):
+		if (is_on_floor() and !is_gravity_inverted) or (is_on_ceiling() and is_gravity_inverted):
+			is_gravity_inverted = !is_gravity_inverted;
+			player_sprite.flip_v = is_gravity_inverted;
+	
+	if shape_id_as_str[cur_shape] == 'circle' and Input.is_action_pressed("up"):
+		if Input.is_action_pressed("right"):
+			for body in right_wall_detector.get_overlapping_bodies():
+				if 'tile_id' in body.get_parent():
+					if body.get_parent().tile_id == 1:
+						velocity.y = -300.0;
+		elif Input.is_action_pressed("left"):
+			for body in left_wall_detector.get_overlapping_bodies():
+				if 'tile_id' in body.get_parent():
+					if body.get_parent().tile_id == 1:
+						velocity.y = -300.0;
 
 func set_shape(shape_id): #currently the shape frame. from 0, they are square, triangle, circle
 	if shape_id >= 0 and shape_id <= 2:
 		player_sprite.frame = shape_id;
 
 func morph_next_shape():
-	if !is_on_floor():
+	if !is_on_floor() or is_gravity_inverted:
 		return;
 	cur_shape += 1;
 	if cur_shape > max_shape_id:

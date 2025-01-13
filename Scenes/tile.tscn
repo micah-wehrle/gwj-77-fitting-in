@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dp5g1atdycmst"]
 
 [ext_resource type="Script" path="res://Scripts/tile.gd" id="1_pdase"]
-[ext_resource type="Texture2D" uid="uid://c38eqvh46kmgy" path="res://icon.svg" id="2_80wse"]
+[ext_resource type="Texture2D" uid="uid://e8nbhru34opu" path="res://Res/WorldBlocks1.png" id="2_xfc5d"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_yfjks"]
 size = Vector2(100, 100)
@@ -11,11 +11,16 @@ script = ExtResource("1_pdase")
 
 [node name="TileRigidBody2D" type="StaticBody2D" parent="."]
 unique_name_in_owner = true
+collision_layer = 3
+collision_mask = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="TileRigidBody2D"]
 shape = SubResource("RectangleShape2D_yfjks")
 
 [node name="TileSprite" type="Sprite2D" parent="."]
 unique_name_in_owner = true
-scale = Vector2(0.78125, 0.78125)
-texture = ExtResource("2_80wse")
+texture_filter = 1
+scale = Vector2(6.25, 6.25)
+texture = ExtResource("2_xfc5d")
+hframes = 8
+vframes = 8

@@ -1,15 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://lkxxm37fqmyj"]
+[gd_scene load_steps=5 format=3 uid="uid://lkxxm37fqmyj"]
 
 [ext_resource type="Script" path="res://Scripts/player.gd" id="1_a3abr"]
 [ext_resource type="Texture2D" uid="uid://cva06sujs13og" path="res://Res/Shapes1.png" id="2_6chvb"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3fpsn"]
-size = Vector2(100, 100)
+size = Vector2(98, 99)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jucsd"]
+size = Vector2(50.75, 20)
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_a3abr")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_3fpsn")
 
 [node name="PlayerShape" type="Polygon2D" parent="."]
@@ -23,3 +27,21 @@ scale = Vector2(3.125, 3.125)
 texture = ExtResource("2_6chvb")
 hframes = 4
 vframes = 4
+
+[node name="LeftWallDetector" type="Area2D" parent="."]
+unique_name_in_owner = true
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="LeftWallDetector"]
+position = Vector2(-26, 39)
+shape = SubResource("RectangleShape2D_jucsd")
+
+[node name="RightWallDetector" type="Area2D" parent="."]
+unique_name_in_owner = true
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RightWallDetector"]
+position = Vector2(26, 39)
+shape = SubResource("RectangleShape2D_jucsd")

@@ -11,7 +11,16 @@ var tile_scene = preload("res://Scenes/tile.tscn")
 var player_scene = preload("res://Scenes/player.tscn");
 var player;
 
-var level_data = '1111111111n1000000001n1000000001n1000000001n1000p00001n1111111111'.split('n');
+var level_data = '111111111111111111111
+200000000000000000001
+200000001111111111001
+200000010110000000001
+20p001000100001110001
+111111111100000000001
+100000000000000000001
+100000002200000000001
+111111222200000000001
+.........222222221111'.split('\n');
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -35,21 +44,27 @@ func build_level():
 		var x = 0;
 		var tile_row = [];
 		for tile_data in tile_row_data:
-			var tile = tile_scene.instantiate();
-			tile_row.push_front(tile);
-			tile_parent.add_child(tile);
-			
-			#setup tile
-			
-			var new_position = Vector2(x * tile_size, y * tile_size);
-			tile.position = new_position;
-			
-			if tile_data == '0':
-				tile.set_is_bg(true);
-			
-			if tile_data == 'p':
-				tile.set_is_bg(true);
-				player.position = new_position;
+			if tile_data != '.':
+				var tile = tile_scene.instantiate();
+				tile_row.push_front(tile);
+				tile_parent.add_child(tile);
+				
+				#setup tile
+				
+				var new_position = Vector2(x * tile_size, y * tile_size);
+				tile.position = new_position;
+				
+				if tile_data == '0':
+					tile.set_is_bg(true);
+					tile.set_type(tile_data);
+				
+				elif tile_data == 'p':
+					tile.set_is_bg(true);
+					tile.set_type('1');
+					player.position = new_position;
+				
+				else:
+					tile.set_type(tile_data);
 			x += 1;
 			pass;
 		tile_grid.push_front(tile_row);
