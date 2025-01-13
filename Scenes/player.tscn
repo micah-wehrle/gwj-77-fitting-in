@@ -63,7 +63,7 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="FloorDetector"]
 position = Vector2(0, 42)
-scale = Vector2(1.44, 1)
+scale = Vector2(1.14168, 1)
 shape = SubResource("RectangleShape2D_mi0yr")
 
 [node name="CeilingDetector" type="Area2D" parent="."]

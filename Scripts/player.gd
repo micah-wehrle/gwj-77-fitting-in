@@ -4,6 +4,8 @@ const tile_size = 100;
 const SPEED = 500.0
 const JUMP_VELOCITY = -700.0
 
+const BOUNCE_DAMP = 0.5;
+
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")*1.8;
 
@@ -11,7 +13,7 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")*1.8;
 @onready var player_sprite = %PlayerSprite1; 
 @onready var left_wall_detector = %LeftWallDetector;
 @onready var right_wall_detector = %RightWallDetector;
-@onready var floor_detector = %RFloorDetector;
+@onready var floor_detector = %FloorDetector;
 @onready var ceiling_detector = %CeilingDetector;
 
 var cur_shape = 0;
@@ -51,10 +53,19 @@ func _physics_process(delta):
 		if !is_on_floor():
 			last_y_vel = velocity.y;
 		elif last_y_vel != 0:
+			
 			if abs(last_y_vel) > abs(JUMP_VELOCITY*1.5):
 				velocity.y = -last_y_vel;
 				if Input.is_action_pressed("down"):
-					velocity.y *= 0.5;
+					velocity.y *= BOUNCE_DAMP;
+				else:
+					var unclean_surfaces_result = get_unclean_surfaces();
+					if unclean_surfaces_result.size() > 0:
+						for body in unclean_surfaces_result:
+							body.flash_tile();
+						velocity.y *= BOUNCE_DAMP;
+			elif abs(last_y_vel) > abs(JUMP_VELOCITY*1.25):
+				velocity.y = -last_y_vel*BOUNCE_DAMP;
 			last_y_vel = 0;
 
 	move_and_slide()
@@ -65,7 +76,13 @@ func _process(delta):
 	
 	if shape_id_as_str[cur_shape] == 'triangle' and (Input.is_action_just_pressed("up") or (Input.is_action_just_pressed("down") and is_on_ceiling())):
 		if (is_on_floor() and !is_gravity_inverted) or (is_on_ceiling() and is_gravity_inverted):
-			invert_gravity();
+			# this needs to be smarter to prevent hanging off the edge
+			var unclean_surfaces_result = get_unclean_surfaces();
+			if unclean_surfaces_result.size() > 0:
+				for body in unclean_surfaces_result:
+					body.flash_tile();
+			else:
+				invert_gravity();
 	
 	if shape_id_as_str[cur_shape] == 'circle' and Input.is_action_pressed("up"):
 		if Input.is_action_pressed("right"):
@@ -101,12 +118,13 @@ func get_standing_surfaces():
 	else:
 		return ceiling_detector.get_overlapping_bodies();
 
-func is_on_clean_surface():
+func get_unclean_surfaces():
+	var unclean_surfaces = [];
 	for body in get_standing_surfaces():
 		if 'tile_id' in body.get_parent():
 			if body.get_parent().tile_id == 2:
-				return body.get_parent();
-	return true;
+				unclean_surfaces.push_back(body.get_parent());
+	return unclean_surfaces;
 
 func invert_gravity():
 	is_gravity_inverted = !is_gravity_inverted;
