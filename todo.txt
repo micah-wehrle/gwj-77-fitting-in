@@ -1,9 +1,14 @@
 Todo list:
 	
-	[ ] Create level editor? Thinking I'll just do this simply in html but we'll see..
-		[ ] Design system for world data.
+	[ ] Finish level editor
+		[X] Make simple webpage to create and export a level
+		[X] Design system for world data.
 			could just do single characters, but might be limited. could do every tile separated by a symbol like ~ or something, and then put data between. Can be raw like 1~1~0p~0b~1 where 1 is a solid tile, 0 is an empty tile (ie a background tile) and the followign letter means button or player. Maybe like that
-	
+		[ ] Add improvements to level editor
+			[ ] Flood fill
+			[ ] Line tool might be nice too
+		[ ] Host level online so others (brandon) can use if needed
+		
 	[X] Get player movement working
 	
 	[ ] Main menu
